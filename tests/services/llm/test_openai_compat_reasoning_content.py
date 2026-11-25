@@ -332,6 +332,14 @@ def test_services_custom_qwen_enables_thinking_without_top_level_effort() -> Non
     assert kwargs["extra_body"] == {"enable_thinking": True}
 
 
+def test_services_groq_qwen_omits_unsupported_thinking_extensions() -> None:
+    kwargs = _build_services_kwargs("groq", None, model="qwen/qwen3.8-27b")
+
+    assert "extra_body" not in kwargs
+    assert "enable_thinking" not in kwargs
+    assert "reasoning_effort" not in kwargs
+
+
 @pytest.mark.parametrize(
     "model",
     [

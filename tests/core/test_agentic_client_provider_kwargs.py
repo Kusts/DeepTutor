@@ -88,6 +88,33 @@ def test_agentic_kwargs_omit_thinking_for_qwen_instruct() -> None:
     assert "extra_body" not in kwargs
 
 
+@pytest.mark.parametrize("model", ["qwen/qwen3.8-27b", "gpt-oss-120b"])
+def test_agentic_kwargs_omit_groq_native_thinking_controls_by_default(model: str) -> None:
+    kwargs = build_completion_kwargs(
+        temperature=0.7,
+        model=model,
+        max_tokens=1024,
+        binding="groq",
+        reasoning_effort=None,
+    )
+
+    assert "extra_body" not in kwargs
+    assert "reasoning_effort" not in kwargs
+
+
+def test_agentic_kwargs_preserve_groq_gpt_oss_reasoning_effort() -> None:
+    kwargs = build_completion_kwargs(
+        temperature=0.7,
+        model="gpt-oss-120b",
+        max_tokens=1024,
+        binding="groq",
+        reasoning_effort="high",
+    )
+
+    assert kwargs["reasoning_effort"] == "high"
+    assert "extra_body" not in kwargs
+
+
 def test_agentic_kwargs_preserve_legacy_shape_without_binding() -> None:
     kwargs = build_completion_kwargs(
         temperature=0.2,

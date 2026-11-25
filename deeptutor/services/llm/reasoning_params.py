@@ -258,8 +258,10 @@ def build_openai_compatible_reasoning_kwargs(
         ):
             kwargs["reasoning_effort"] = resolved_effort
 
+    # Groq rejects native thinking extensions such as Qwen's enable_thinking.
     if (
         thinking_style
+        and provider_name != "groq"
         and resolved_effort is not None
         and not (provider_name == "openrouter" and semantic_effort == "none")
     ):
@@ -267,7 +269,11 @@ def build_openai_compatible_reasoning_kwargs(
         extra = _THINKING_STYLE_MAP.get(thinking_style, lambda _enabled: None)(thinking_enabled)
         if extra:
             kwargs.setdefault("extra_body", {}).update(extra)
-    elif thinking_style and _disable_thinking_by_default(provider_name, model_name):
+    elif (
+        thinking_style
+        and provider_name != "groq"
+        and _disable_thinking_by_default(provider_name, model_name)
+    ):
         extra = _THINKING_STYLE_MAP.get(thinking_style, lambda _enabled: None)(False)
         if extra:
             kwargs.setdefault("extra_body", {}).update(extra)
