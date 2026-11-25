@@ -8,6 +8,7 @@ from deeptutor.services.llm.reasoning_params import (
     build_openai_compatible_reasoning_kwargs,
     default_reasoning_effort_for,
 )
+from deeptutor.services.provider_registry import find_by_name
 
 
 class TestDefaultReasoningEffortFor:
@@ -142,3 +143,26 @@ def test_qwen_thinking_models_keep_native_controls(binding, effort, enabled) -> 
     assert build_openai_compatible_reasoning_kwargs(
         spec=None, binding=binding, model="qwen3-235b-a22b", reasoning_effort=effort
     ) == {"extra_body": {"enable_thinking": enabled}}
+
+
+@pytest.mark.parametrize("effort", [None, "high", "none", "minimal"])
+def test_groq_omits_native_thinking_extensions_for_qwen(effort: str | None) -> None:
+    assert build_openai_compatible_reasoning_kwargs(
+        spec=find_by_name("groq"),
+        binding="groq",
+        model="qwen/qwen3.8-27b",
+        reasoning_effort=effort,
+    ) == {}
+
+
+@pytest.mark.parametrize(
+    ("effort", "expected"),
+    [(None, {}), ("high", {"reasoning_effort": "high"})],
+)
+def test_groq_gpt_oss_preserves_supported_reasoning_effort(effort, expected) -> None:
+    assert build_openai_compatible_reasoning_kwargs(
+        spec=find_by_name("groq"),
+        binding="groq",
+        model="gpt-oss-120b",
+        reasoning_effort=effort,
+    ) == expected
