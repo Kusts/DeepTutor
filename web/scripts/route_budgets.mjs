@@ -15,6 +15,7 @@ const NEXT_BIN = path.join(WEB_ROOT, "node_modules", "next", "dist", "bin", "nex
 const ROUTE_TARGETS = [
   { route: "/chat", requestPath: "/chat", budgetKb: 1_100 },
   { route: "/chat/[sessionId]", requestPath: "/chat/perf-budget", budgetKb: 1_100 },
+  { route: "/classroom", requestPath: "/classroom", budgetKb: 1_100 },
   { route: "/settings", requestPath: "/settings", budgetKb: 840 },
   { route: "/knowledge-bases", requestPath: "/knowledge-bases", budgetKb: 550 },
   { route: "/co-writer", requestPath: "/co-writer", budgetKb: 470 },

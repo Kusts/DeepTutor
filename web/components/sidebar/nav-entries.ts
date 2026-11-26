@@ -8,6 +8,7 @@ import {
   LayoutGrid,
   ListTodo,
   PenLine,
+  Presentation,
   Settings,
   type LucideIcon,
 } from 'lucide-react'
@@ -22,6 +23,8 @@ export interface NavEntry {
   defaultCollapsed?: boolean
   /** Model capability this feature needs; locked when the user lacks it. */
   requires?: Capability
+  /** UI setting that must be on for this entry to appear. */
+  requiresSetting?: 'classroom_enabled'
   /**
    * Learning-account surfaces that may see this entry. Absent means the
    * entry is hidden whenever a learning policy is in effect (#1222).
@@ -45,6 +48,14 @@ export const PRIMARY_NAV: NavEntry[] = [
     icon: House,
     tooltipKey: 'Home tooltip',
     requires: 'llm',
+    surfaces: ['chat'],
+  },
+  {
+    href: '/classroom',
+    label: 'Classroom',
+    icon: Presentation,
+    tooltipKey: 'Classroom tooltip',
+    requiresSetting: 'classroom_enabled',
     surfaces: ['chat'],
   },
   {
@@ -95,7 +106,11 @@ export const DEFAULT_COLLAPSED_NAV = PRIMARY_NAV.filter(entry => entry.defaultCo
   entry => entry.href
 )
 
-export const PRIMARY_NAV_HREFS = PRIMARY_NAV.map(entry => entry.href)
+// Setting-gated entries are not part of the persisted default arrangement:
+// they only exist in the layout when the user opts in (see SidebarNav).
+export const PRIMARY_NAV_HREFS = PRIMARY_NAV
+  .filter(entry => !entry.requiresSetting)
+  .map(entry => entry.href)
 
 export const NAV_BY_HREF = new Map(
   [...PRIMARY_NAV, ...SECONDARY_NAV].map(entry => [entry.href, entry])

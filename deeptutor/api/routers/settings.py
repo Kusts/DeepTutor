@@ -237,6 +237,10 @@ class VoiceAutoplayUpdate(BaseModel):
     voice_autoplay: bool
 
 
+class ClassroomEnabledUpdate(BaseModel):
+    classroom_enabled: bool
+
+
 class VoiceMathSpeakUpdate(BaseModel):
     voice_math_speak: bool
 
@@ -2217,6 +2221,17 @@ async def update_voice_autoplay(update: VoiceAutoplayUpdate):
     """
     patch_ui_settings(voice_autoplay=update.voice_autoplay)
     return {"voice_autoplay": update.voice_autoplay}
+
+
+@router.put("/classroom-enabled")
+async def update_classroom_enabled(update: ClassroomEnabledUpdate):
+    """Persist the opt-in flag for the classroom surface.
+
+    A personal UI preference (any authenticated user). The sidebar reads it
+    from /api/settings; the default lives with the other interface defaults.
+    """
+    patch_ui_settings(classroom_enabled=update.classroom_enabled)
+    return {"classroom_enabled": update.classroom_enabled}
 
 
 @router.put("/voice-math-speak")

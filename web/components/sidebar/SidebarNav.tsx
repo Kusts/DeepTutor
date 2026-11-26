@@ -41,10 +41,12 @@ import { useCapabilityAccess } from "@/components/access/CapabilityAccessContext
 import {
   NAV_BY_HREF,
   DEFAULT_COLLAPSED_NAV,
+  PRIMARY_NAV,
   PRIMARY_NAV_HREFS,
   isNavActive,
   navVisibleUnderPolicy,
 } from "@/components/sidebar/nav-entries";
+import { useClassroomEnabled } from "@/hooks/useClassroomEnabled";
 import { useModules, moduleRouteAvailable } from "@/hooks/useModules";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { Tooltip } from "@/shared/ui/Tooltip";
@@ -59,7 +61,11 @@ import {
   type SidebarNavLayout,
 } from "@/lib/sidebar-layout";
 
-const MODULE_NAV_HREFS = PRIMARY_NAV_HREFS.filter((href) => href !== "/chat");
+// Includes setting-gated entries so the classroom lands in its shipped slot
+// next to /chat; the gate below decides whether it is actually rendered.
+const MODULE_NAV_HREFS = PRIMARY_NAV
+  .filter((entry) => entry.href !== "/chat")
+  .map((entry) => entry.href);
 
 const MORE_EXPANDED_KEY = "deeptutor.sidebar.moreExpanded";
 /** One curve and one duration for every part of the "More" disclosure, so the
@@ -114,13 +120,18 @@ export function SidebarNav({
 
   const { learningPolicy } = useAuthStatus();
   const { modules } = useModules();
+  const { value: classroomEnabled } = useClassroomEnabled();
   const moduleHrefs = useMemo(
     () =>
-      MODULE_NAV_HREFS.filter((href) =>
-        modules !== null && moduleRouteAvailable(href, modules) &&
-        navVisibleUnderPolicy(href, learningPolicy?.allowedSurfaces ?? null),
-      ),
-    [learningPolicy, modules],
+      MODULE_NAV_HREFS.filter((href) => {
+        const setting = NAV_BY_HREF.get(href)?.requiresSetting;
+        if (setting === "classroom_enabled" && !classroomEnabled) return false;
+        return (
+          modules !== null && moduleRouteAvailable(href, modules) &&
+          navVisibleUnderPolicy(href, learningPolicy?.allowedSurfaces ?? null)
+        );
+      }),
+    [classroomEnabled, learningPolicy, modules],
   );
   const resolved = useMemo(
     () => resolveNavLayout(moduleHrefs, layout, DEFAULT_COLLAPSED_NAV),

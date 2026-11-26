@@ -2,6 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 
+import { useClassroomEnabled } from "@/hooks/useClassroomEnabled";
 import { useVoiceAutoplayPreference } from "@/hooks/useVoiceAutoplay";
 import { useVoiceMathSpeakPreference } from "@/hooks/useVoiceMathSpeak";
 
@@ -53,6 +54,7 @@ export function VoicePlaybackPrefs() {
   const { t } = useTranslation();
   const autoplay = useVoiceAutoplayPreference();
   const mathSpeak = useVoiceMathSpeakPreference();
+  const classroom = useClassroomEnabled();
   return (
     <section className="mb-8">
       <div className="mb-3">
@@ -81,6 +83,17 @@ export function VoicePlaybackPrefs() {
           value={mathSpeak.value}
           loading={mathSpeak.loading}
           onChange={mathSpeak.setValue}
+        />
+        <PlaybackToggle
+          label={t("Classroom (sala de aula)")}
+          description={t(
+            "Show the classroom in the sidebar. Voice and lip-sync are not available yet.",
+          )}
+          value={classroom.value}
+          loading={classroom.loading}
+          // The hook rolls back and throws a fixed message on failure; no
+          // server detail is surfaced, and the switch returns to its old state.
+          onChange={(next) => void classroom.setValue(next).catch(() => undefined)}
         />
       </div>
     </section>
