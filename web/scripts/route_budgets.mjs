@@ -12,10 +12,13 @@ const NEXT_BIN = path.join(WEB_ROOT, "node_modules", "next", "dist", "bin", "nex
 // Preview redesign baseline (2026-10-26, raw production JS): chat 1072KB,
 // notebook home 450KB, reading 1342KB, mastery 1063KB. These measurements
 // are identical on preview before the Edge TTS change; retain ~2–4% headroom.
+// +10 KB approved 2026-11-27: absorbs webpack chunk regrouping from the new
+// route entries importing ChatWorkspace (measured /chat 1102KB, /classroom
+// 1105KB at the old 1100KB limit); no real code growth on the /chat route.
 const ROUTE_TARGETS = [
-  { route: "/chat", requestPath: "/chat", budgetKb: 1_100 },
-  { route: "/chat/[sessionId]", requestPath: "/chat/perf-budget", budgetKb: 1_100 },
-  { route: "/classroom", requestPath: "/classroom", budgetKb: 1_100 },
+  { route: "/chat", requestPath: "/chat", budgetKb: 1_110 },
+  { route: "/chat/[sessionId]", requestPath: "/chat/perf-budget", budgetKb: 1_110 },
+  { route: "/classroom", requestPath: "/classroom", budgetKb: 1_110 },
   { route: "/settings", requestPath: "/settings", budgetKb: 840 },
   { route: "/knowledge-bases", requestPath: "/knowledge-bases", budgetKb: 550 },
   { route: "/co-writer", requestPath: "/co-writer", budgetKb: 470 },

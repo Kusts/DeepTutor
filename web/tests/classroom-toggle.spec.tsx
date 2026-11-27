@@ -47,7 +47,7 @@ it("adds the classroom opt-in as an accessible third switch", () => {
   expect(fixture.setValue).toHaveBeenCalledWith(true);
   expect(
     screen.getByText(
-      "Show the classroom in the sidebar. Voice and lip-sync are not available yet.",
+      "Show the classroom in the sidebar. Voice and lip-sync are active while it is on.",
     ),
   ).toBeTruthy();
 });

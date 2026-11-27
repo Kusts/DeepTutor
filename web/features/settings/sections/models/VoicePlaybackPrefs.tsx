@@ -87,7 +87,7 @@ export function VoicePlaybackPrefs() {
         <PlaybackToggle
           label={t("Classroom (sala de aula)")}
           description={t(
-            "Show the classroom in the sidebar. Voice and lip-sync are not available yet.",
+            "Show the classroom in the sidebar. Voice and lip-sync are active while it is on.",
           )}
           value={classroom.value}
           loading={classroom.loading}

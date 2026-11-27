@@ -38,6 +38,18 @@ test("the aliases inherit all four shipped themes", () => {
 
 test("the connecting animation is disabled by reduced-motion", () => {
   assert.match(tokens, /prefers-reduced-motion:\s*reduce/);
-  const reduced = tokens.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\}/)?.[1] ?? "";
-  assert.match(reduced, /animation:\s*none/);
+  // The stylesheet has two reduced-motion blocks (voice meter and avatar).
+  // Inspect every block - a single non-greedy match would stop at the first
+  // block and never see the animation override.
+  const reducedBlocks = [
+    ...tokens.matchAll(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\}/g),
+  ].map((match) => match[1]);
+  assert.ok(
+    reducedBlocks.length >= 2,
+    `expected both reduced-motion blocks, found ${reducedBlocks.length}`,
+  );
+  assert.ok(
+    reducedBlocks.some((block) => /animation:\s*none/.test(block)),
+    "no reduced-motion block disables the connecting animation",
+  );
 });

@@ -28,13 +28,15 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: "en" } }),
 }));
 
-it("renders the classroom shell around the existing conversation when enabled", () => {
+it("renders the classroom shell around the existing conversation when enabled", async () => {
   fixture.flag = true;
   fixture.loading = false;
   expect(() => render(<ClassroomPage />)).not.toThrow();
   expect(screen.getByRole("heading", { name: "Classroom" })).toBeTruthy();
-  expect(screen.getByRole("region", { name: "Classroom avatar" })).toBeTruthy();
-  expect(screen.getByText("Voice is ready. Speak to your Tutor.")).toBeTruthy();
+  // The voice/avatar layer is loaded on demand; wait for it instead of
+  // asserting on a synchronous mount that no longer exists in production.
+  expect(await screen.findByRole("region", { name: "Classroom avatar" })).toBeTruthy();
+  expect(await screen.findByText("Voice is ready. Speak to your Tutor.")).toBeTruthy();
   expect(screen.getByTestId("conversation")).toBeTruthy();
 });
 
