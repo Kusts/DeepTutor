@@ -1,0 +1,114 @@
+/* Classroom aliases. Every --sala-* custom property points at a semantic
+   token published by app/globals.css, so :root, .dark, .theme-snow and
+   .theme-glass are inherited without a second palette or copied colours.
+   No literal colour values live in this file. */
+.dt-classroom {
+  --sala-canvas: var(--background);
+  --sala-ink: var(--foreground);
+  --sala-surface: var(--card);
+  --sala-surface-ink: var(--card-foreground);
+  --sala-accent: var(--primary);
+  --sala-accent-ink: var(--primary-foreground);
+  --sala-muted: var(--muted);
+  --sala-muted-ink: var(--muted-foreground);
+  --sala-edge: var(--border);
+  --sala-raised: var(--surface-raised);
+  --sala-shadow: var(--shadow-raised);
+  --sala-focus: var(--ring);
+  --sala-speed: var(--motion-fast);
+}
+
+.dt-classroom__stage {
+  background: var(--sala-surface);
+  color: var(--sala-surface-ink);
+  border: 1px solid var(--sala-edge);
+  box-shadow: var(--sala-shadow);
+}
+
+.dt-classroom__orb {
+  background: var(--sala-accent);
+  color: var(--sala-accent-ink);
+}
+
+.dt-classroom__caption {
+  color: var(--sala-muted-ink);
+}
+
+.dt-classroom__avatar-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+}
+
+/* The slot is invisible until the renderer inserts its canvas, so the CSS orb
+   remains the only visible fallback when the player cannot load. */
+.dt-classroom__livliv-slot {
+  position: relative;
+  width: 2.25rem;
+  height: 2.75rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--sala-muted);
+}
+
+.dt-classroom__livliv-slot:empty {
+  display: none;
+}
+
+.dt-classroom__livliv-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dt-classroom__credit {
+  color: var(--sala-muted-ink);
+}
+
+.dt-classroom__character-field {
+  min-width: 7rem;
+}
+
+.dt-classroom__voice-controls {
+  background: var(--sala-surface);
+  border: 1px solid var(--sala-edge);
+  box-shadow: var(--sala-shadow);
+}
+
+.dt-classroom__voice-level {
+  background: var(--sala-muted);
+}
+
+.dt-classroom__voice-level-fill {
+  background: var(--sala-accent);
+  transition: width var(--sala-speed) linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-classroom__voice-level-fill {
+    transition: none;
+  }
+}
+
+@keyframes dt-classroom-breathe {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+.dt-classroom__orb--connecting {
+  animation: dt-classroom-breathe var(--sala-speed) ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-classroom__orb--connecting {
+    animation: none;
+  }
+
+  .dt-classroom__livliv-canvas {
+    animation: none;
+  }
+}
